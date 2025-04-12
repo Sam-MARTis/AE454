@@ -9,3 +9,13 @@ canvas{
     height: 100%;
     width: 100%;
 }
+button{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
