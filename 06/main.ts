@@ -7,6 +7,8 @@ const button1 = document.getElementById("but1") as HTMLButtonElement;
 const button2 = document.getElementById("but2") as HTMLButtonElement;
 const button3 = document.getElementById("but3") as HTMLButtonElement;
 
+const TIME_STEP = 0.1;
+const NUMBER_OF_POINTS = 1000;
 
 
 const xMin = -2;
@@ -36,41 +38,6 @@ let ydot = (x: number, y: number, mu: number = -0.90) => {
     return mu*y + x - x**3  + x*y
 }
 
-// const drawDirectionField = () => {
-//     ctx.strokeStyle = "red";
-//     console.log("Drawing direction field");
-//     for(let i=xMin; i<xMax; i+=0.2){
-//         for(let j=yMin; j<yMax; j+=0.2){
-//             const x = i;
-//             const y = j;
-//             const xdotValue = xdot(x, y);
-//             const ydotValue = ydot(x, y);
-//             let length = (Math.sqrt(xdotValue**2 + ydotValue**2))**0.5;
-//             const drawLength = 0.1;
-//             ctx.strokeStyle = `rgb(${length*50}, 0, ${255- length*50})`;
-//             // if(length > 1){
-//             //     length = 0;
-//             // }
-//             if(length < 0.1){
-//                 length = 0.1;
-//             }
-//             const angle = Math.atan2(ydotValue, xdotValue);
-
-
-//             ctx.beginPath();
-//             ctx.moveTo(...mapSpaceToCanvas(x, y));
-//             ctx.lineTo(...mapSpaceToCanvas(x + drawLength*Math.cos(angle), y + drawLength*Math.sin(angle)));
-//             ctx.stroke();
-//             ctx.arc(...mapSpaceToCanvas(x + drawLength*Math.cos(angle), y + drawLength*Math.sin(angle)), 2, 0, Math.PI*2);
-//             // ctx.fillStyle = "red";
-//             ctx.fill();
-//             // ctx.arcTo(...mapSpaceToCanvas(x + xdotValue/length*0.1, y + ydotValue/length*0.1), 2, 0, Math.PI*2);
-//             // ctx.strokeStyle = "red";
-//             ctx.stroke();
-//         }
-//     }
-    
-// }
 
 const initializeSeedPoints = (xmin: number, xmax: number, ymin: number, ymax: number, pointCount: number) => {
     const seedPoints: [number, number][] = [];
@@ -82,12 +49,11 @@ const initializeSeedPoints = (xmin: number, xmax: number, ymin: number, ymax: nu
     return seedPoints;
 }
 
-let points: number[][] = initializeSeedPoints(xMin, xMax, yMin, yMax, 5000);
-const TIME_STEP = 0.1;
+let points: number[][] = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
 let anim: number = 0;
 const startPlottingPhasePotriats = (mu: number) => {
     // prevPoints = points.slice(0);
-    ctx.fillStyle = "rgba(0, 0, 0, 0.0)"; // Try 0.02 to 0.1 depending on trail speed
+    ctx.fillStyle = "rgba(0, 0, 0, 0.005)"; // Try 0.02 to 0.1 depending on trail speed
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     console.log("Plotting phase portraits");
     ctx.strokeStyle = "green";
@@ -124,7 +90,6 @@ const startPlottingPhasePotriats = (mu: number) => {
 
 }
 
-const NUMBER_OF_POINTS = 2000;
 
 const muVals = [-0.92, -0.8645, -0.80];
 // drawDirectionField();
@@ -207,5 +172,18 @@ button3.addEventListener("click", () => {
     startPlottingPhasePotriats(muVals[2]);
 });
 
+const initializeSomePoints = (pointsToReset: number = 80) => {
+    const range = points.length;
+    for(let i=0; i<pointsToReset; i++){
+        const x = Math.random() * (xMax - xMin) + xMin;
+        const y = Math.random() * (yMax - yMin) + yMin;
+        points[Math.floor(Math.random()*range)] = [x, y];
+    }
+
+}
 
 
+setInterval(()=> {
+    // points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
+    initializeSomePoints(100);
+}, 500)
