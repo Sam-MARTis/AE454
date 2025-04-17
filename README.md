@@ -1,6 +1,6 @@
 ## AE454 - Dynamics and Bifurcation
 
-The web version can be found here
+The web version can be found here: [https://sam-martis.github.io/AE454_Assignment2/](https://sam-martis.github.io/AE454_Assignment2/)
 
 
 ### How to go through this.
