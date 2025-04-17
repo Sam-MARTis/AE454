@@ -1,0 +1,25 @@
+*{
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+}
+canvas{
+    position: absolute;
+    background-color: black;
+    height: 100%;
+    width: 100%;
+}
+#buttons{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

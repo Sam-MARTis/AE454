@@ -1,85 +1,86 @@
-"use strict";
-const canvas = document.getElementById("projectCanvas");
+var canvas = document.getElementById("projectCanvas");
 canvas.width = window.innerWidth * devicePixelRatio;
 canvas.height = window.innerHeight * devicePixelRatio;
-canvas.style.width = `${window.innerWidth}px`;
-canvas.style.height = `${window.innerHeight}px`;
-const ctx = canvas.getContext("2d");
-const button1 = document.getElementById("but1");
-const button2 = document.getElementById("but2");
-const button3 = document.getElementById("but3");
-const TIME_STEP = 0.05;
-const NUMBER_OF_POINTS = 5000;
-const xMin = -3;
-const xMax = 3;
-const yMin = -3;
-const yMax = 3;
-const mapCanvasToSpace = (xCanvas, yCanvas) => {
-    const xSpace = (xCanvas / canvas.width) * (xMax - xMin) + xMin;
-    const ySpace = (yCanvas / canvas.height) * (yMax - yMin) + yMin;
+canvas.style.width = "".concat(window.innerWidth, "px");
+canvas.style.height = "".concat(window.innerHeight, "px");
+var ctx = canvas.getContext("2d");
+var button1 = document.getElementById("but1");
+var button2 = document.getElementById("but2");
+var button3 = document.getElementById("but3");
+var TIME_STEP = 0.05;
+var NUMBER_OF_POINTS = 5000;
+var xMin = -3;
+var xMax = 3;
+var yMin = -3;
+var yMax = 3;
+var mapCanvasToSpace = function (xCanvas, yCanvas) {
+    var xSpace = (xCanvas / canvas.width) * (xMax - xMin) + xMin;
+    var ySpace = (yCanvas / canvas.height) * (yMax - yMin) + yMin;
     return [xSpace, ySpace];
 };
-const mapSpaceToCanvas = (xSpace, ySpace) => {
-    const xCanvas = ((xSpace - xMin) / (xMax - xMin)) * canvas.width;
-    const yCanvas = ((ySpace - yMin) / (yMax - yMin)) * canvas.height;
+var mapSpaceToCanvas = function (xSpace, ySpace) {
+    var xCanvas = ((xSpace - xMin) / (xMax - xMin)) * canvas.width;
+    var yCanvas = canvas.height - ((ySpace - yMin) / (yMax - yMin)) * canvas.height;
     return [xCanvas, yCanvas];
 };
 if (!ctx) {
     throw Error("Context unable to be found");
 }
-let xdot = (x, y, mu = -0.90) => {
+var xdot = function (x, y, mu) {
+    if (mu === void 0) { mu = -0.90; }
     return y;
 };
-let ydot = (x, y, mu = -0.90) => {
-    return mu * y + x - x ** 3 + x * y;
+var ydot = function (x, y, mu) {
+    if (mu === void 0) { mu = -0.90; }
+    return mu * y + x - Math.pow(x, 3) + x * y;
 };
-const initializeSeedPoints = (xmin, xmax, ymin, ymax, pointCount) => {
-    const seedPoints = [];
-    for (let i = 0; i < pointCount; i++) {
-        const x = Math.random() * (xmax - xmin) + xmin;
-        const y = Math.random() * (ymax - ymin) + ymin;
+var initializeSeedPoints = function (xmin, xmax, ymin, ymax, pointCount) {
+    var seedPoints = [];
+    for (var i = 0; i < pointCount; i++) {
+        var x = Math.random() * (xmax - xmin) + xmin;
+        var y = Math.random() * (ymax - ymin) + ymin;
         seedPoints.push([x, y]);
     }
     return seedPoints;
 };
-let points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
-let anim = 0;
-const startPlottingPhasePotriats = (mu) => {
+var points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
+var anim = 0;
+var startPlottingPhasePotriats = function (mu) {
     // prevPoints = points.slice(0);
     ctx.fillStyle = "rgba(0, 0, 0, 0.01)"; // Try 0.02 to 0.1 depending on trail speed
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     console.log("Plotting phase portraits");
     ctx.strokeStyle = "green";
     ctx.lineWidth = 1;
-    for (let i = 0; i < points.length; i++) {
-        const x = points[i][0];
-        const y = points[i][1];
+    for (var i = 0; i < points.length; i++) {
+        var x = points[i][0];
+        var y = points[i][1];
         // Use RK4
-        const k1x = xdot(x, y, mu);
-        const k1y = ydot(x, y, mu);
-        const k2x = xdot(x + TIME_STEP / 2 * k1x, y + TIME_STEP / 2 * k1y, mu);
-        const k2y = ydot(x + TIME_STEP / 2 * k1x, y + TIME_STEP / 2 * k1y, mu);
-        const k3x = xdot(x + TIME_STEP / 2 * k2x, y + TIME_STEP / 2 * k2y, mu);
-        const k3y = ydot(x + TIME_STEP / 2 * k2x, y + TIME_STEP / 2 * k2y, mu);
-        const k4x = xdot(x + TIME_STEP * k3x, y + TIME_STEP * k3y, mu);
-        const k4y = ydot(x + TIME_STEP * k3x, y + TIME_STEP * k3y, mu);
-        const newX = x + TIME_STEP / 6 * (k1x + 2 * k2x + 2 * k3x + k4x);
-        const newY = y + TIME_STEP / 6 * (k1y + 2 * k2y + 2 * k3y + k4y);
+        var k1x = xdot(x, y, mu);
+        var k1y = ydot(x, y, mu);
+        var k2x = xdot(x + TIME_STEP / 2 * k1x, y + TIME_STEP / 2 * k1y, mu);
+        var k2y = ydot(x + TIME_STEP / 2 * k1x, y + TIME_STEP / 2 * k1y, mu);
+        var k3x = xdot(x + TIME_STEP / 2 * k2x, y + TIME_STEP / 2 * k2y, mu);
+        var k3y = ydot(x + TIME_STEP / 2 * k2x, y + TIME_STEP / 2 * k2y, mu);
+        var k4x = xdot(x + TIME_STEP * k3x, y + TIME_STEP * k3y, mu);
+        var k4y = ydot(x + TIME_STEP * k3x, y + TIME_STEP * k3y, mu);
+        var newX = x + TIME_STEP / 6 * (k1x + 2 * k2x + 2 * k3x + k4x);
+        var newY = y + TIME_STEP / 6 * (k1y + 2 * k2y + 2 * k3y + k4y);
         points[i][0] = newX;
         points[i][1] = newY;
         ctx.beginPath();
         ctx.lineWidth = 0.2;
         ctx.strokeStyle = "blue";
-        ctx.moveTo(...mapSpaceToCanvas(x, y));
-        ctx.lineTo(...mapSpaceToCanvas(newX, newY));
+        ctx.moveTo.apply(ctx, mapSpaceToCanvas(x, y));
+        ctx.lineTo.apply(ctx, mapSpaceToCanvas(newX, newY));
         // console.log("Drawing line from ", prevPoints[i], " to ", [newX, newY]);
         ctx.stroke();
     }
-    anim = requestAnimationFrame(() => { startPlottingPhasePotriats(mu); });
+    anim = requestAnimationFrame(function () { startPlottingPhasePotriats(mu); });
 };
-const muVals = [-0.92, -0.8645, -0.80];
+var muVals = [-0.92, -0.8645, -0.80];
 // drawDirectionField();
-button1.addEventListener("click", () => {
+button1.addEventListener("click", function () {
     cancelAnimationFrame(anim);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // ctx.beginPath();
@@ -97,7 +98,7 @@ button1.addEventListener("click", () => {
     // ctx.lineWidth = 1;
     // button1.style.display = "none";
 });
-button2.addEventListener("click", () => {
+button2.addEventListener("click", function () {
     cancelAnimationFrame(anim);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // ctx.beginPath();
@@ -113,7 +114,7 @@ button2.addEventListener("click", () => {
     points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
     startPlottingPhasePotriats(muVals[1]);
 });
-button3.addEventListener("click", () => {
+button3.addEventListener("click", function () {
     cancelAnimationFrame(anim);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // ctx.beginPath();
@@ -128,15 +129,16 @@ button3.addEventListener("click", () => {
     points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
     startPlottingPhasePotriats(muVals[2]);
 });
-const initializeSomePoints = (pointsToReset = 80) => {
-    const range = points.length;
-    for (let i = 0; i < pointsToReset; i++) {
-        const x = Math.random() * (xMax - xMin) + xMin;
-        const y = Math.random() * (yMax - yMin) + yMin;
+var initializeSomePoints = function (pointsToReset) {
+    if (pointsToReset === void 0) { pointsToReset = 80; }
+    var range = points.length;
+    for (var i = 0; i < pointsToReset; i++) {
+        var x = Math.random() * (xMax - xMin) + xMin;
+        var y = Math.random() * (yMax - yMin) + yMin;
         points[Math.floor(Math.random() * range)] = [x, y];
     }
 };
-setInterval(() => {
+setInterval(function () {
     // points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
     initializeSomePoints(100);
 }, 100);

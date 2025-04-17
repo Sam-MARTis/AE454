@@ -7,17 +7,17 @@ const regenButton = document.getElementById("but4");
 const clearTrailsButton = document.getElementById("but5");
 const muInput = document.getElementById("muRange");
 const muDisplay = document.getElementById("muDisplay");
-const NUMBER_OF_POINTS = 500;
+const NUMBER_OF_POINTS = 30;
 const fractionToUpdate = 0.1;
-const lineWidth = 0.5;
+const lineWidth = 2;
 const updateNo = Math.floor(NUMBER_OF_POINTS * fractionToUpdate);
-const DEFAULT_TIME_STEP = 0.01;
+const DEFAULT_TIME_STEP = 0.0001;
 let TIME_STEP = DEFAULT_TIME_STEP;
-const ITERS_PER_DRAW = 1;
-let xMin = -5;
-let xMax = 5;
-let yMin = -5;
-let yMax = 5;
+const ITERS_PER_DRAW = 500;
+let xMin = -2;
+let xMax = 2;
+let yMin = -2;
+let yMax = 2;
 let mu = -0.9;
 const mapCanvasToSpace = (xCanvas, yCanvas) => {
     const xSpace = (xCanvas / canvas.width) * (xMax - xMin) + xMin;
@@ -26,7 +26,7 @@ const mapCanvasToSpace = (xCanvas, yCanvas) => {
 };
 const mapSpaceToCanvas = (xSpace, ySpace) => {
     const xCanvas = ((xSpace - xMin) / (xMax - xMin)) * canvas.width;
-    const yCanvas = ((ySpace - yMin) / (yMax - yMin)) * canvas.height;
+    const yCanvas = canvas.height - ((ySpace - yMin) / (yMax - yMin)) * canvas.height;
     return [xCanvas, yCanvas];
 };
 const mapPolarToCartesian = (r, th) => {
@@ -62,6 +62,11 @@ let OUTSIDE_CANVAS_RESPAWN = false;
 let points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
 let anim = 0;
 const startPlottingPhasePotriats = () => {
+    ctx.beginPath();
+    ctx.moveTo(canvas.width / 2, canvas.height / 2);
+    ctx.arc(canvas.width / 2, canvas.height / 2, 2, 0, Math.PI * 2);
+    ctx.fillStyle = "red";
+    ctx.fill();
     // prevPoints = points.slice(0);
     // console.log("Plotting phase portraits");
     ctx.strokeStyle = "green";
@@ -212,6 +217,6 @@ muInput.addEventListener("input", () => {
 //     initializeSomePoints(updateNo);
 // }, 500)
 setInterval(() => {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.02)"; // Try 0.02 to 0.1 depending on trail speed
+    ctx.fillStyle = "rgba(0, 0, 0, 0.7)"; // Try 0.02 to 0.1 depending on trail speed
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }, 100); // 60 FPS

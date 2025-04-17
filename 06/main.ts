@@ -25,7 +25,7 @@ const mapCanvasToSpace = (xCanvas: number, yCanvas: number): [number, number] =>
 }
 const mapSpaceToCanvas = (xSpace: number, ySpace: number): [number, number] => {
     const xCanvas = ((xSpace - xMin) / (xMax - xMin)) * canvas.width;
-    const yCanvas = ((ySpace - yMin) / (yMax - yMin)) * canvas.height;
+    const yCanvas = canvas.height - ((ySpace - yMin) / (yMax - yMin)) * canvas.height;
     return [xCanvas, yCanvas];
 }
 

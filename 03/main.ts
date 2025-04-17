@@ -142,10 +142,10 @@ button1.addEventListener("click", () => {
     ctx.stroke();
     ctx.strokeStyle = "blue";
     xdot = (x: number, y: number) => {
-        return -2*Math.cos(x) - Math.cos(y);
+        return y
     }
     ydot = (x: number, y: number) => {
-        return -2*Math.cos(y) - Math.cos(x);
+        return 3-x-y**2
     }
     // console.log("Button clicked");
     points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);

@@ -10,21 +10,21 @@ const muInput = document.getElementById("muRange") as HTMLInputElement;
 const muDisplay = document.getElementById("muDisplay") as HTMLSpanElement;
 
 
-const NUMBER_OF_POINTS = 500;
+const NUMBER_OF_POINTS = 30;
 const fractionToUpdate = 0.1;
-const lineWidth = 0.5;
+const lineWidth = 2;
 
 const updateNo = Math.floor(NUMBER_OF_POINTS * fractionToUpdate);
 
 
-const DEFAULT_TIME_STEP = 0.01;
+const DEFAULT_TIME_STEP = 0.0001;
 let TIME_STEP = DEFAULT_TIME_STEP ;
-const ITERS_PER_DRAW = 1;
+const ITERS_PER_DRAW = 500;
 
-let xMin = -5;
-let xMax = 5;
-let yMin = -5;
-let yMax = 5;
+let xMin = -2;
+let xMax = 2;
+let yMin = -2;
+let yMax = 2;
 
 let mu = -0.9
 const mapCanvasToSpace = (xCanvas: number, yCanvas: number): [number, number] => {
@@ -34,7 +34,7 @@ const mapCanvasToSpace = (xCanvas: number, yCanvas: number): [number, number] =>
 }
 const mapSpaceToCanvas = (xSpace: number, ySpace: number): [number, number] => {
     const xCanvas = ((xSpace - xMin) / (xMax - xMin)) * canvas.width;
-    const yCanvas = ((ySpace - yMin) / (yMax - yMin)) * canvas.height;
+    const yCanvas = canvas.height - ((ySpace - yMin) / (yMax - yMin)) * canvas.height;
     return [xCanvas, yCanvas];
 }
 const mapPolarToCartesian = (r: number, th: number): [number, number] => {
@@ -76,6 +76,11 @@ let OUTSIDE_CANVAS_RESPAWN = false;
 let points: number[][] = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
 let anim: number = 0;
 const startPlottingPhasePotriats = () => {
+    ctx.beginPath();
+    ctx.moveTo(canvas.width/2, canvas.height/2);
+    ctx.arc(canvas.width/2, canvas.height/2, 2, 0, Math.PI*2);
+    ctx.fillStyle = "red";
+    ctx.fill();
     // prevPoints = points.slice(0);
 
     // console.log("Plotting phase portraits");
@@ -265,7 +270,7 @@ muInput.addEventListener("input", () => {
 // }, 500)
 
 setInterval(() => {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.02)"; // Try 0.02 to 0.1 depending on trail speed
+    ctx.fillStyle = "rgba(0, 0, 0, 0.7)"; // Try 0.02 to 0.1 depending on trail speed
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }, 100); // 60 FPS
 

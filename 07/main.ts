@@ -7,6 +7,7 @@ const button1 = document.getElementById("but1") as HTMLButtonElement;
 const button2 = document.getElementById("but2") as HTMLButtonElement;
 const button3 = document.getElementById("but3") as HTMLButtonElement;
 const regenButton = document.getElementById("but4") as HTMLButtonElement;
+const clearTrailButton = document.getElementById("but5") as HTMLButtonElement;
 const muInput = document.getElementById("muRange") as HTMLInputElement;
 const muDisplay = document.getElementById("muDisplay") as HTMLSpanElement;
 
@@ -34,7 +35,7 @@ const mapCanvasToSpace = (xCanvas: number, yCanvas: number): [number, number] =>
 }
 const mapSpaceToCanvas = (xSpace: number, ySpace: number): [number, number] => {
     const xCanvas = ((xSpace - xMin) / (xMax - xMin)) * canvas.width;
-    const yCanvas = ((ySpace - yMin) / (yMax - yMin)) * canvas.height;
+    const yCanvas = canvas.height - ((ySpace - yMin) / (yMax - yMin)) * canvas.height;
     return [xCanvas, yCanvas];
 }
 
@@ -208,6 +209,10 @@ button3.addEventListener("click", () => {
 
 regenButton.addEventListener("click", () => {
     points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
+});
+
+clearTrailButton.addEventListener("click", () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 });
 
 const initializeSomePoints = (pointsToReset: number = 80) => {
