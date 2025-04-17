@@ -5,5 +5,5 @@ The solutions do match in broad. However due to $\epsilon$ being large, the solu
 
 
 
-Not for $\epsilon = 0.02$, the solutions match quite well:
+Note for $\epsilon = 0.02$, the solutions match quite well:
 ![Small epsilon result](diff_sol_small-e.png)

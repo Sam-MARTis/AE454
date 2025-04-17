@@ -12,7 +12,7 @@ const muDisplay = document.getElementById("muDisplay") as HTMLSpanElement;
 
 const NUMBER_OF_POINTS = 30;
 const fractionToUpdate = 0.1;
-const lineWidth = 2;
+const lineWidth = 1;
 
 const updateNo = Math.floor(NUMBER_OF_POINTS * fractionToUpdate);
 
@@ -270,7 +270,7 @@ muInput.addEventListener("input", () => {
 // }, 500)
 
 setInterval(() => {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.7)"; // Try 0.02 to 0.1 depending on trail speed
+    ctx.fillStyle = "rgba(0, 0, 0, 0.02)"; // Try 0.02 to 0.1 depending on trail speed
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }, 100); // 60 FPS
 

@@ -2,19 +2,22 @@
 const canvas = document.getElementById("projectCanvas") as HTMLCanvasElement;
 canvas.width = window.innerWidth*devicePixelRatio;
 canvas.height = window.innerHeight*devicePixelRatio;
+canvas.style.width = `${window.innerWidth}px`;
+canvas.style.height = `${window.innerHeight}px`;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 const button1 = document.getElementById("but1") as HTMLButtonElement;
 const button2 = document.getElementById("but2") as HTMLButtonElement;
 const button3 = document.getElementById("but3") as HTMLButtonElement;
-const button4 = document.getElementById("but4") as HTMLButtonElement;
-const button5 = document.getElementById("but5") as HTMLButtonElement;
+
+const TIME_STEP = 0.01;
+const NUMBER_OF_POINTS = 5000;
 
 
+let xMin = -5;
+let xMax = 5;
+let yMin = -5;
+let yMax = 5;
 
-const xMin = -5;
-const xMax = 5;
-const yMin = -5;
-const yMax = 5;
 
 const mapCanvasToSpace = (xCanvas: number, yCanvas: number): [number, number] => {
     const xSpace = (xCanvas / canvas.width) * (xMax - xMin) + xMin;
@@ -32,47 +35,12 @@ if(!ctx){
 }
 
 let xdot = (x: number, y: number) => {
-    return x + Math.exp(-y)
+    return y
 }
 let ydot = (x: number, y: number) => {
-    return -y
+    return x
 }
 
-const drawDirectionField = () => {
-    ctx.strokeStyle = "red";
-    console.log("Drawing direction field");
-    for(let i=xMin; i<xMax; i+=0.2){
-        for(let j=yMin; j<yMax; j+=0.2){
-            const x = i;
-            const y = j;
-            const xdotValue = xdot(x, y);
-            const ydotValue = ydot(x, y);
-            let length = (Math.sqrt(xdotValue**2 + ydotValue**2))**0.5;
-            const drawLength = 0.1;
-            ctx.strokeStyle = `rgb(${length*50}, 0, ${255- length*50})`;
-            // if(length > 1){
-            //     length = 0;
-            // }
-            if(length < 0.1){
-                length = 0.1;
-            }
-            const angle = Math.atan2(ydotValue, xdotValue);
-
-
-            ctx.beginPath();
-            ctx.moveTo(...mapSpaceToCanvas(x, y));
-            ctx.lineTo(...mapSpaceToCanvas(x + drawLength*Math.cos(angle), y + drawLength*Math.sin(angle)));
-            ctx.stroke();
-            ctx.arc(...mapSpaceToCanvas(x + drawLength*Math.cos(angle), y + drawLength*Math.sin(angle)), 2, 0, Math.PI*2);
-            // ctx.fillStyle = "red";
-            ctx.fill();
-            // ctx.arcTo(...mapSpaceToCanvas(x + xdotValue/length*0.1, y + ydotValue/length*0.1), 2, 0, Math.PI*2);
-            // ctx.strokeStyle = "red";
-            ctx.stroke();
-        }
-    }
-    
-}
 
 const initializeSeedPoints = (xmin: number, xmax: number, ymin: number, ymax: number, pointCount: number) => {
     const seedPoints: [number, number][] = [];
@@ -84,15 +52,15 @@ const initializeSeedPoints = (xmin: number, xmax: number, ymin: number, ymax: nu
     return seedPoints;
 }
 
-let points: number[][] = initializeSeedPoints(xMin, xMax, yMin, yMax, 2000);
-const TIME_STEP = 0.001;
+let points: number[][] = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
 let anim: number = 0;
 const startPlottingPhasePotriats = () => {
-    ctx
     // prevPoints = points.slice(0);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.01)"; // Try 0.02 to 0.1 depending on trail speed
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     console.log("Plotting phase portraits");
     ctx.strokeStyle = "green";
-    ctx.lineWidth = 5;
+    // ctx.lineWidth = 1;
     for(let i=0; i<points.length; i++){
         const x = points[i][0];
         const y = points[i][1];
@@ -110,7 +78,7 @@ const startPlottingPhasePotriats = () => {
         points[i][0] = newX;
         points[i][1] = newY;
         ctx.beginPath();
-        ctx.lineWidth = 1;
+        // ctx.lineWidth = 0.2;
         ctx.strokeStyle = "blue";
         ctx.moveTo(...mapSpaceToCanvas(x, y));
         ctx.lineTo(...mapSpaceToCanvas(newX, newY));
@@ -120,35 +88,37 @@ const startPlottingPhasePotriats = () => {
 
     }
 
-    anim = requestAnimationFrame(startPlottingPhasePotriats);
+    anim = requestAnimationFrame(() => {startPlottingPhasePotriats()});
 
 
 }
 
-const NUMBER_OF_POINTS = 2000;
+
+
 
 // drawDirectionField();
 button1.addEventListener("click", () => {
     cancelAnimationFrame(anim);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "red";
+    // ctx.beginPath();
+    // ctx.lineWidth = 1;
+    // ctx.strokeStyle = "red";
 
-    ctx.moveTo(canvas.width/2, 0);
-    ctx.lineTo(canvas.width/2, canvas.height);
-    ctx.moveTo(0, canvas.height/2);
-    ctx.lineTo(canvas.width, canvas.height/2);
-    ctx.stroke();
+    // ctx.moveTo(canvas.width/2, 0);
+    // ctx.lineTo(canvas.width/2, canvas.height);
+    // ctx.moveTo(0, canvas.height/2);
+    // ctx.lineTo(canvas.width, canvas.height/2);
+    // ctx.stroke();
     ctx.strokeStyle = "blue";
+
+    points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
     xdot = (x: number, y: number) => {
-        return y
+        return y;
     }
     ydot = (x: number, y: number) => {
-        return 3-x-y**2
+        return 3 - y**2 - x;
     }
-    // console.log("Button clicked");
-    points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
+    ctx.lineWidth = 0.4;
 
     startPlottingPhasePotriats();
 
@@ -162,22 +132,26 @@ button1.addEventListener("click", () => {
 button2.addEventListener("click", () => {
     cancelAnimationFrame(anim);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "red";
+    // ctx.beginPath();
+    // ctx.lineWidth = 1;
+    // ctx.strokeStyle = "red";
 
-    ctx.moveTo(canvas.width/2, 0);
-    ctx.lineTo(canvas.width/2, canvas.height);
-    ctx.moveTo(0, canvas.height/2);
-    ctx.lineTo(canvas.width, canvas.height/2);
-    ctx.stroke();
-    ctx.strokeStyle = "blue";
+    // ctx.moveTo(canvas.width/2, 0);
+    // ctx.lineTo(canvas.width/2, canvas.height);
+    // ctx.moveTo(0, canvas.height/2);
+    // ctx.lineTo(canvas.width, canvas.height/2);
+    // ctx.stroke();
     xdot = (x: number, y: number) => {
-        return y;
+        return y - y**3;
     }
     ydot = (x: number, y: number) => {
-        return -x + y*(1 - x**2);
+        return x*Math.cos(y);
     }
+    ctx.strokeStyle = "blue";
+
+    // (a) ˙x = y + μx, ˙y = −x + μy − xy
+
+    ctx.lineWidth = 0.5;
     points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
 
     startPlottingPhasePotriats();
@@ -186,74 +160,46 @@ button2.addEventListener("click", () => {
 button3.addEventListener("click", () => {
     cancelAnimationFrame(anim);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "red";
+    // ctx.beginPath();
+    // ctx.lineWidth = 1;
+    // ctx.strokeStyle = "red";
 
-    ctx.moveTo(canvas.width/2, 0);
-    ctx.lineTo(canvas.width/2, canvas.height);
-    ctx.moveTo(0, canvas.height/2);
-    ctx.lineTo(canvas.width, canvas.height/2);
-    ctx.stroke();
-    ctx.strokeStyle = "blue";
+    // ctx.moveTo(canvas.width/2, 0);
+    // ctx.lineTo(canvas.width/2, canvas.height);
+    // ctx.moveTo(0, canvas.height/2);
+    // ctx.lineTo(canvas.width, canvas.height/2);
+    // ctx.stroke();
     xdot = (x: number, y: number) => {
-        return 2*x*y;
+        return Math.sin(y);
     }
     ydot = (x: number, y: number) => {
-        return y**2 - x**2;
+        return y**2 - x;
     }
+    xMin = -5;
+    yMin = -10;
+    xMax = 30;
+    yMax = 10;
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 0.5;
+
     points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
 
     startPlottingPhasePotriats();
 });
 
-
-button4.addEventListener("click", () => {
-    cancelAnimationFrame(anim);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "red";
-
-    ctx.moveTo(canvas.width/2, 0);
-    ctx.lineTo(canvas.width/2, canvas.height);
-    ctx.moveTo(0, canvas.height/2);
-    ctx.lineTo(canvas.width, canvas.height/2);
-    ctx.stroke();
-    ctx.strokeStyle = "blue";
-    xdot = (x: number, y: number) => {
-        return y + y**2;
+const initializeSomePoints = (pointsToReset: number = 80) => {
+    const range = points.length;
+    for(let i=0; i<pointsToReset; i++){
+        const x = Math.random() * (xMax - xMin) + xMin;
+        const y = Math.random() * (yMax - yMin) + yMin;
+        points[Math.floor(Math.random()*range)] = [x, y];
     }
-    ydot = (x: number, y: number) => {
-        return  -x/2 +y/5 - x*y + (6/5)*(y**2);
-    }
-    points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
 
-    startPlottingPhasePotriats();
-});
+}
 
 
-button5.addEventListener("click", () => {
-    cancelAnimationFrame(anim);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "red";
-
-    ctx.moveTo(canvas.width/2, 0);
-    ctx.lineTo(canvas.width/2, canvas.height);
-    ctx.moveTo(0, canvas.height/2);
-    ctx.lineTo(canvas.width, canvas.height/2);
-    ctx.stroke();
-    ctx.strokeStyle = "blue";
-    xdot = (x: number, y: number) => {
-        return y + y**2;
-    }
-    ydot = (x: number, y: number) => {
-        return -x + (1/5)*y - x*y + (6/5)*(y**2);
-    }
-    points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
-
-    startPlottingPhasePotriats();
-});
+setInterval(()=> {
+    // points = initializeSeedPoints(xMin, xMax, yMin, yMax, NUMBER_OF_POINTS);
+    initializeSomePoints(100);
+}, 100)
 

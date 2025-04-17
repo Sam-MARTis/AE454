@@ -1,5 +1,7 @@
 ## Solution
 
+##### Please the index.html file for plots
+
 #### 1
 A is invalid as x**y cannot be evaluated for negative x
 

@@ -1,6 +1,6 @@
 using Plots
 println("\033c")
-ϵ = 0.02
+ϵ = 2
 a = 1
 Δt = 50
 dt = 0.01
@@ -36,4 +36,5 @@ n = Int(Δt / dt)
 x, t = iterate(x₀, y₀, dt, n)
 plot(t, x, label="Numerical", title="Diff sol", xlabel="t", ylabel="x")
 plot!(t, analyticalSol.(t), label="Analytical", linestyle=:dash)
-savefig("diff_sol_small-e.png")
+# show()
+# savefig("diff_sol_small-e.png")

@@ -1,12 +1,8 @@
 ## Solution
 
-#### 1
-A is invalid as x**y cannot be evaluated for negative x
+#### a)
+At |$\mu$| -> 1, things get funky. At higher values, point becomes attracting. Especially at ~2.9 (magnitude)
 
-#### 2
-b is a supercritical bifurcation
-
-
-#### 3
-c is a subcritical bifurcation. Can be verified due to there being hysteresis on changing mu value. Large amplitude solutions exist.
-
+#### b)
+Obtained by solving the differential equation. Essentially non autonomous
+![alt text](Rvsθ.png)
