@@ -1,12 +1,14 @@
 {
     "compilerOptions": {
-        "target": "es2016",
-        "module": "CommonJS",
-        "strict": true,
-        "outDir": "."
+      "target": "es6",
+      "module": "ESNext",
+      "moduleResolution": "node",
+      "strict": true,
+      "outDir": "./dist"
     },
     "files": [
-        "main.ts",
-        "QuadTree.ts",
+      "main.ts",
+      "QuadTree.ts"
     ]
-}
+  }
+  

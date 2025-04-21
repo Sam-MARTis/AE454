@@ -1,12 +1,12 @@
-const LEAF_NODE_MAX_CAPACITY = 4;
+// const LEAF_NODE_MAX_CAPACITY = 4;
 
 
-class QuadTree {
+export class QuadTree {
   x: number;
   y: number;
   width: number;
   height: number;
-  points: Point[];
+  points: [number, number][];
   capacity: number;
   divided: boolean;
   subTrees: QuadTree[];
@@ -29,12 +29,12 @@ class QuadTree {
     this.subTrees = [];
   }
 
-  checkValidPoint = (point: Point): boolean => {
+  checkValidPoint = (point: [number,  number]): boolean => {
     return (
-      point.x > this.x &&
-      point.x <= this.x + this.width &&
-      point.y > this.y &&
-      point.y <= this.y + this.height
+      point[0] > this.x &&
+      point[0] <= this.x + this.width &&
+      point[1] > this.y &&
+      point[1] <= this.y + this.height
     );
   };
   subDivide = (): void => {
@@ -83,10 +83,14 @@ class QuadTree {
     this.points = [];
   };
 
-  addPoint = (point: Point): boolean => {
+  addPoint = (point: [number, number]): boolean => {
     if (this.checkValidPoint(point) == false) {
       return false;
     }
+
+
+
+    
     this.pointsCount += 1;
 
     if (this.points.length < this.capacity && !this.divided) {
@@ -105,11 +109,11 @@ class QuadTree {
           }
         }
       }
-      console.warn(point.x, point.y)
-      throw new Error("Point not in sub trees");
+      console.warn(point[0], point[1])
+      throw new Error(`Point not in sub trees, ${point[0]}, ${point[1]}\n Valid bounds are: (${this.x}, ${this.y}, ${this.x + this.width}, ${this.y + this.height})`);
     }
   };
-  addPoints = (pointList: Point[]): void => {
+  addPoints = (pointList: [number, number][]): void => {
     pointList.forEach(point => {
       this.addPoint(point)
     })
@@ -128,7 +132,7 @@ class QuadTree {
     return x2 > rx1 && x1 <= rx2 && y1 < ry2 && y2 >= ry1;
   };
 
-  queryTree = (rx1: number, ry1: number, rx2: number, ry2: number): Point[] => {
+  queryTree = (rx1: number, ry1: number, rx2: number, ry2: number): [number, number][] => {
     //In case of errors, try adding -1 to width and height
     // if(rx1<this.x){
     //   return [...this.queryTree(this.x, ry1, rx2, ry2), ...this.queryTree(rx1+(this.width-1), ry1, this.x+(this.width-1), ry2)]
@@ -156,10 +160,10 @@ class QuadTree {
     if (!this.doesIntersect(rx1, ry1, rx2, ry2)) {
       return [];
     }
-    let pointsToReturn: Point[] = [];
+    let pointsToReturn: [number, number][] = [];
     if (!this.divided) {
       this.points.forEach((point) => {
-        if (point.x >= rx1 && point.x <= rx2 && point.y >= ry1 && point.y <= ry2) {
+        if (point[0] >= rx1 && point[0] <= rx2 && point[1]>= ry1 && point[1]<= ry2) {
           pointsToReturn.push(point);
         }
       });
@@ -280,3 +284,7 @@ class QuadTree {
 //   resizeCanvas();
 //   renderStuff();
 // });
+
+
+// export default QuadTree;
+// export { QuadTree };

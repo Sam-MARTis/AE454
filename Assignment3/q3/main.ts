@@ -1,3 +1,9 @@
+// Project: Lyapunov Exponent Visualizer
+
+//Import quadtree from quadtree.ts
+import { QuadTree } from "./QuadTree.js";
+
+// const a = new QuadTree(0, 0, 100, 100, 4);
 
 const canvas = document.getElementById("projectCanvas") as HTMLCanvasElement;
 canvas.width = window.innerWidth*devicePixelRatio;
@@ -18,10 +24,12 @@ const mapTypeSelect = document.getElementById("mapType") as HTMLSelectElement;
 let rStart = 0;
 let rEnd = 4;
 let dr = 0.02;
-let convergeIterations = 400;
-let outputIterations = 2000;
+const POINTS_PER_LEAF = 100;
+let convergeIterations = 500;
+let outputIterations = 500;
 let mapType = "logistic";
-
+let tree: QuadTree;
+console.clear();
 const getUserMenuInputAndRender = () => {
     rStart = parseFloat(rStartInput.value);
     rEnd = parseFloat(rEndInput.value);
@@ -35,12 +43,29 @@ const getUserMenuInputAndRender = () => {
 
 }
 
+
 //Step size
 const RSU_W = 0.8 //Ratio of screen width used
 const RSU_H = 0.8 //Ratio of screen height used
+const xPad = canvas.width * (1 - RSU_W) / 2;
+const yPad = canvas.height * (1 - RSU_H) / 2;
 // const yScalle = 10
 
+const drawTree = (tree: QuadTree, xMin:number, yMin:number, length:number, height:number, scaleX: number, scaleY: number): void => {
+    ctx.beginPath();
+    ctx.strokeStyle = "green";
+    // const yPos = canvas.height-yPad - (finalXVals[j] * yScale);
+    ctx.rect(xPad+ (tree.x-xMin)*scaleX,  canvas.height-yPad - ((tree.y-yMin)*scaleY), tree.width*scaleX, tree.height*scaleY);
+    ctx.stroke();
+    ctx.closePath();
+    if (tree.divided) {
+        tree.subTrees.forEach((subTree) => {
+            drawTree(subTree, xMin, yMin, length, height, scaleX, scaleY);
+        });
+    }
 
+
+  };
 
 const performItertationMap = (xstart: number, r: number, iterations: number, returnIterations: number = 1, mapType: String = "logistic"):number[] => {
     if(returnIterations > iterations){
@@ -122,10 +147,10 @@ const render = (rVals: number[], convergeIterations: number, outputIterations: n
     ctx.lineWidth = 1;
     const rmin = Math.min(...rVals);
     const rmax = Math.max(...rVals);
+    tree = new QuadTree(rStart, 0, rEnd-rStart, 1, POINTS_PER_LEAF);
     const xScale = RSU_W*canvas.width /(rmax-rmin);
     const yScale = RSU_H*canvas.height;
-    const xPad = canvas.width * (1 - RSU_W) / 2;
-    const yPad = canvas.height * (1 - RSU_H) / 2;
+
     const randomInitials = new Array(rVals.length).fill(null);
     for(let i = 0; i < rVals.length; i++){
         randomInitials[i] = Math.random();
@@ -137,18 +162,26 @@ const render = (rVals: number[], convergeIterations: number, outputIterations: n
 
   
         const x = performItertationMap(randomInitials[i], r, outputIterations, outputIterations,mapType);
-        const finalXVals = x.slice(convergeIterations);
-        lyapunovExps[i] = calculateLyapunov(r, x, mapType);
+        const finalXVals = x.slice( convergeIterations);
+        // lyapunovExps[i] = calculateLyapunov(r, x, mapType);
+        // console.log(finalXVals.length);
         const xPos = xPad+ (r-rmin) * xScale;
         
         ctx.fillStyle = "white";
         for(let j = 0; j< finalXVals.length; j++){
             const yPos = canvas.height-yPad - (finalXVals[j] * yScale);
-            ctx.fillRect(xPos, yPos, 0.1, 0.1);          
+            ctx.fillRect(xPos, yPos, 0.5, 0.5);          
         }
 
-   
+        for(let j = 0; j< outputIterations-convergeIterations; j++){
+            const yPos = finalXVals[j];
+            const xPos = rVals[i];
+            tree.addPoint([xPos, yPos]);
+        }
     }
+    drawTree(tree, rmin, 0, rmax-rmin, 1, xScale, yScale);
+    /* 
+    // Lyapunov Exponent Calculation 
     ctx.beginPath();
     ctx.strokeStyle = "blue";
     const yRef = canvas.height - yPad*3;
@@ -166,7 +199,12 @@ const render = (rVals: number[], convergeIterations: number, outputIterations: n
         ctx.moveTo(xPos, yPos);
 
 
+
     }
+
+    */
+
+
     ctx.stroke();
     // console.log("done");
 }
