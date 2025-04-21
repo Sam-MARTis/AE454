@@ -31,7 +31,7 @@ const getUserMenuInputAndRender = () => {
 const RSU_W = 0.8; //Ratio of screen width used
 const RSU_H = 0.8; //Ratio of screen height used
 // const yScalle = 10
-const performItertationMap = (xstart, r, iterations, returnIterations = 1) => {
+const performItertationMap = (xstart, r, iterations, returnIterations = 1, mapType = "logistic") => {
     if (returnIterations > iterations) {
         throw Error("returnIterations must be less than or equal to iterations");
     }
@@ -39,10 +39,24 @@ const performItertationMap = (xstart, r, iterations, returnIterations = 1) => {
     const xVals = new Array(returnIterations).fill(null);
     xVals[0] = x;
     let refPoint = 1;
-    for (let i = 0; i < iterations; i++) {
+    if (mapType == "logistic") {
         x = r * x * (1 - x);
-        xVals[refPoint] = x;
-        refPoint = (refPoint + 1) - returnIterations * Number(refPoint == returnIterations - 1);
+        for (let i = 0; i < iterations; i++) {
+            x = r * x * (1 - x);
+            xVals[refPoint] = x;
+            refPoint = (refPoint + 1) - returnIterations * Number(refPoint == returnIterations - 1);
+        }
+    }
+    else if (mapType == "sine") {
+        const pi = Math.PI;
+        for (let i = 0; i < iterations; i++) {
+            x = r * Math.sin(x * pi);
+            xVals[refPoint] = x;
+            refPoint = (refPoint + 1) - returnIterations * Number(refPoint == returnIterations - 1);
+        }
+    }
+    else {
+        throw Error("Unknown maptype in perormIterationMap function");
     }
     const returnList = new Array(returnIterations).fill(null);
     for (let i = 0; i < returnIterations; i++) {
@@ -50,11 +64,19 @@ const performItertationMap = (xstart, r, iterations, returnIterations = 1) => {
     }
     return returnList;
 };
-const calculateLyapunov = (r, xVals) => {
+const calculateLyapunov = (r, xVals, mapType = "logistic") => {
     const n = xVals.length;
     const lnX = new Array(n).fill(null);
-    for (let i = 0; i < n; i++) {
-        lnX[i] = Math.log(Math.abs(r * (1 - 2 * xVals[i])));
+    const pi = Math.PI;
+    if (mapType == "logistic") {
+        for (let i = 0; i < n; i++) {
+            lnX[i] = Math.log(Math.abs(r * (1 - 2 * xVals[i])));
+        }
+    }
+    else if (mapType == "sine") {
+        for (let i = 0; i < n; i++) {
+            lnX[i] = Math.log(Math.abs(r * pi * Math.cos(pi * xVals[i])));
+        }
     }
     const sum = lnX.reduce((acc, val) => acc + val, 0);
     const lyapunovExp = sum / n;
@@ -90,10 +112,10 @@ const render = (rVals, convergeIterations, outputIterations) => {
         const r = rVals[i];
         // console.log("r", r);
         // console.log("RandomInitials", randomInitials[i]);
-        const x = performItertationMap(randomInitials[i], r, outputIterations, outputIterations);
+        const x = performItertationMap(randomInitials[i], r, outputIterations, outputIterations, "sine");
         // console.log("x", x);
         const finalXVals = x.slice(convergeIterations);
-        lyapunovExps[i] = calculateLyapunov(r, x);
+        lyapunovExps[i] = calculateLyapunov(r, x, "sine");
         // console.log(finalXVals)
         const xPos = xPad + (r - rmin) * xScale;
         ctx.fillStyle = "white";
