@@ -114,7 +114,7 @@ const initializeXAxis = (rmin: number, rmax: number, dx: number):number[] => {
     }
     return xVals;
 }
-const render = (rVals: number[], convergeIterations: number, outputIterations: number, mapType): void => {
+const render = (rVals: number[], convergeIterations: number, outputIterations: number, mapType: String): void => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);

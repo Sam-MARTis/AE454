@@ -12,20 +12,23 @@ const drInput = document.getElementById("dr");
 const convergeIterationsInput = document.getElementById("convergeIterations");
 const outputIterationsInput = document.getElementById("outputIterations");
 const submitBtn = document.getElementById("submitBtn");
+const mapTypeSelect = document.getElementById("mapType");
 let rStart = 0;
 let rEnd = 4;
 let dr = 0.02;
 let convergeIterations = 400;
 let outputIterations = 2000;
+let mapType = "logistic";
 const getUserMenuInputAndRender = () => {
     rStart = parseFloat(rStartInput.value);
     rEnd = parseFloat(rEndInput.value);
     dr = parseFloat(drInput.value);
     convergeIterations = parseInt(convergeIterationsInput.value);
     outputIterations = parseInt(outputIterationsInput.value);
+    mapType = mapTypeSelect.value;
     // console.log(rStart, rEnd, dr, convergeIterations, outputIterations);
     const rVals = initializeXAxis(rStart, rEnd, dr);
-    render(rVals, convergeIterations, outputIterations);
+    render(rVals, convergeIterations, outputIterations, mapType);
 };
 //Step size
 const RSU_W = 0.8; //Ratio of screen width used
@@ -90,7 +93,7 @@ const initializeXAxis = (rmin, rmax, dx) => {
     }
     return xVals;
 };
-const render = (rVals, convergeIterations, outputIterations) => {
+const render = (rVals, convergeIterations, outputIterations, mapType) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -110,13 +113,9 @@ const render = (rVals, convergeIterations, outputIterations) => {
     const lyapunovExps = new Array(rVals.length).fill(null);
     for (let i = 0; i < rVals.length; i++) {
         const r = rVals[i];
-        // console.log("r", r);
-        // console.log("RandomInitials", randomInitials[i]);
-        const x = performItertationMap(randomInitials[i], r, outputIterations, outputIterations, "sine");
-        // console.log("x", x);
+        const x = performItertationMap(randomInitials[i], r, outputIterations, outputIterations, mapType);
         const finalXVals = x.slice(convergeIterations);
-        lyapunovExps[i] = calculateLyapunov(r, x, "sine");
-        // console.log(finalXVals)
+        lyapunovExps[i] = calculateLyapunov(r, x, mapType);
         const xPos = xPad + (r - rmin) * xScale;
         ctx.fillStyle = "white";
         for (let j = 0; j < finalXVals.length; j++) {

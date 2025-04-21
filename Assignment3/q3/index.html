@@ -30,8 +30,16 @@
           <label for="outputIterations">Output Iterations</label>
           <input type="number" id="outputIterations" value="2000" />
         </div>
+        <label for="mapType">Simulation Type</label>
+        <select id="mapType">
+            <option value="logistic">Logistic</option>
+            <option value="sine">Sine</option>
+        </select>
+        <p class="disclaimer">Remember to rescale your axes<br> Green is Lyapunov exponent</p>
+        <br>
         <button id="submitBtn">Run Simulation</button>
-      </div>
+        
+      </div>  
       
     <canvas id="projectCanvas"></canvas>
     <script src="main.js"></script>

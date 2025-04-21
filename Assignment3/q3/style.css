@@ -6,7 +6,6 @@ canvas{
     width: 100%;
 }
 
-/* Reset default margin/padding */
 * {
     margin: 0;
     padding: 0;
@@ -20,14 +19,12 @@ canvas{
     background-color: #f9f9f9;
   }
   
-  /* Style canvas to fill screen */
   #projectCanvas {
     display: block;
     width: 100vw;
     height: 100vh;
   }
   
-  /* Optional: floating settings panel */
   #settingsPanel {
     position: absolute;
     top: 20px;
@@ -76,4 +73,30 @@ canvas{
   button:hover {
     background-color: #0056b3;
   }
-  
+  select {
+    width: 120px; 
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+}
+
+select:hover {
+    border-color: #4CAF50; 
+}
+
+select:focus {
+    outline: none;
+    border-color: #4CAF50; 
+    box-shadow: 0 0 4px rgba(0, 200, 0, 0.5); 
+}
+.disclaimer {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 10px;
+  text-align: left;
+  font-style: italic;
+}
