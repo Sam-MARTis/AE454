@@ -31,9 +31,9 @@ export class QuadTree {
 
   checkValidPoint = (point: [number,  number]): boolean => {
     return (
-      point[0] > this.x &&
+      point[0] >= this.x &&
       point[0] <= this.x + this.width &&
-      point[1] > this.y &&
+      point[1] >= this.y &&
       point[1] <= this.y + this.height
     );
   };
@@ -90,7 +90,7 @@ export class QuadTree {
 
 
 
-    
+
     this.pointsCount += 1;
 
     if (this.points.length < this.capacity && !this.divided) {

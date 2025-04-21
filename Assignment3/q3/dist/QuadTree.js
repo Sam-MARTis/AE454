@@ -2,9 +2,9 @@
 export class QuadTree {
     constructor(x, y, width, height, capacity) {
         this.checkValidPoint = (point) => {
-            return (point[0] > this.x &&
+            return (point[0] >= this.x &&
                 point[0] <= this.x + this.width &&
-                point[1] > this.y &&
+                point[1] >= this.y &&
                 point[1] <= this.y + this.height);
         };
         this.subDivide = () => {

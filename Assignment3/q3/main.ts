@@ -29,6 +29,7 @@ let convergeIterations = 500;
 let outputIterations = 500;
 let mapType = "logistic";
 let tree: QuadTree;
+let scale = 1;
 console.clear();
 const getUserMenuInputAndRender = () => {
     rStart = parseFloat(rStartInput.value);
@@ -51,16 +52,16 @@ const xPad = canvas.width * (1 - RSU_W) / 2;
 const yPad = canvas.height * (1 - RSU_H) / 2;
 // const yScalle = 10
 
-const drawTree = (tree: QuadTree, xMin:number, yMin:number, length:number, height:number, scaleX: number, scaleY: number): void => {
+const drawTree = (tree: QuadTree, xMin:number, yMin:number, length:number, height:number, scaleX: number, scaleY: number, scale: number): void => {
     ctx.beginPath();
     ctx.strokeStyle = "green";
     // const yPos = canvas.height-yPad - (finalXVals[j] * yScale);
-    ctx.rect(xPad+ (tree.x-xMin)*scaleX,  canvas.height-yPad - ((tree.y-yMin)*scaleY), tree.width*scaleX, tree.height*scaleY);
+    ctx.rect(xPad+ (tree.x-xMin)*scaleX,  canvas.height-yPad - (((tree.y/scale)-yMin)*scaleY), tree.width*scaleX, tree.height*scaleY/scale);
     ctx.stroke();
     ctx.closePath();
     if (tree.divided) {
         tree.subTrees.forEach((subTree) => {
-            drawTree(subTree, xMin, yMin, length, height, scaleX, scaleY);
+            drawTree(subTree, xMin, yMin, length, height, scaleX, scaleY, scale);
         });
     }
 
@@ -147,9 +148,10 @@ const render = (rVals: number[], convergeIterations: number, outputIterations: n
     ctx.lineWidth = 1;
     const rmin = Math.min(...rVals);
     const rmax = Math.max(...rVals);
-    tree = new QuadTree(rStart, 0, rEnd-rStart, 1, POINTS_PER_LEAF);
+    tree = new QuadTree(rStart, 0, rEnd-rStart, 1*scale, POINTS_PER_LEAF);
     const xScale = RSU_W*canvas.width /(rmax-rmin);
     const yScale = RSU_H*canvas.height;
+    
 
     const randomInitials = new Array(rVals.length).fill(null);
     for(let i = 0; i < rVals.length; i++){
@@ -176,10 +178,10 @@ const render = (rVals: number[], convergeIterations: number, outputIterations: n
         for(let j = 0; j< outputIterations-convergeIterations; j++){
             const yPos = finalXVals[j];
             const xPos = rVals[i];
-            tree.addPoint([xPos, yPos]);
+            tree.addPoint([xPos, yPos*scale]);
         }
     }
-    drawTree(tree, rmin, 0, rmax-rmin, 1, xScale, yScale);
+    drawTree(tree, rmin, 0, rmax-rmin, 1, xScale, yScale, scale);
     /* 
     // Lyapunov Exponent Calculation 
     ctx.beginPath();
