@@ -16,7 +16,7 @@ end
 
 # σ = BigFloat("10")
 # b = BigFloat("8")/BigFloat("3")
-# β = BigFloat("16")
+# β = BigFloat("166")
 
 σ = BigFloat("10")
 β = BigFloat("8")/BigFloat("3")
@@ -26,18 +26,35 @@ b = BigFloat("166")
 # x = BigFloat("-7.13");
 # y = BigFloat("-7.11");
 # z = BigFloat("155.41");
-x_min = BigFloat("-20")
-x_max = BigFloat("20")
-y_min = BigFloat("-20")
-y_max = BigFloat("20")
-z_min = BigFloat("100")
-z_max = BigFloat("200")
+
+# x_min = BigFloat("-7.13")
+# x_max = BigFloat("-7.11")
+# y_min = BigFloat("155.41")
+# y_max = BigFloat("155.41")
+# z_min = BigFloat("155.41")
+# z_max = BigFloat("155.41")
+
+# x_min = BigFloat("10")
+# x_max = BigFloat("15")
+# y_min = BigFloat("10")
+# y_max = BigFloat("10")
+# z_min = BigFloat("0")
+# z_max = BigFloat("1")
+
+
+
+x_min = BigFloat("-75")
+x_max = BigFloat("75")
+y_min = BigFloat("-125")
+y_max = BigFloat("125")
+z_min = BigFloat("75")
+z_max = BigFloat("300")
 
 iterations = 50000
-paths = 10
+paths = 1
 
 
-dt = BigFloat("0.003")
+dt = BigFloat("0.005")
 function iterate(x::BigFloat, y::BigFloat, z::BigFloat, σ::BigFloat, ρ::BigFloat, β::BigFloat, dt::BigFloat)
     #RK4
     k1x = ẋ(x, y, z, σ, ρ, β)
@@ -92,7 +109,7 @@ for i = 1:paths
     y_vals = [p[2] for p in points_array[:, i]]
     z_vals = [p[3] for p in points_array[:, i]]
     # colour = HSL(clamp(i / paths, 0.0, 1.0), 1.0, 0.5)
-    colour = RGB(HSL(Float64(i)/paths, 1, 0.5))
+    colour = RGB{Float64}(1-i/paths, 0.1, i/paths)
 
     println("Colour: ", colour)
     # println(i/paths)
@@ -103,26 +120,29 @@ for i = 1:paths
     plot!( x_vals, y_vals, z_vals,
           label="", color=colour)
 end
+b_round = round(b, digits=3)
+dt_round = round(Float64(dt), digits=10)
+# display(lorenz_plot)
+savefig(lorenz_plot, "lorenz-attractor-3D_dt-($dt_round)_iterations-($iterations)_Paths-($paths)_r-($b_round).html")
 
-display(lorenz_plot)
+xz_plot = plot(
+    xlabel="X", ylabel="Z", 
+    title="Lorenz Attractor in XZ",
+    legend=false
+)
+for i = 1:paths
+    x_vals = [p[1] for p in points_array[:, i]]
+    y_vals = [p[3] for p in points_array[:, i]]
+    # colour = HSL(clamp(i / paths, 0.0, 1.0), 1.0, 0.5)
+    colour = RGB{Float64}(1-i/paths, 0.1, i/paths)
 
+    println("Colour: ", colour)
 
+    scatter!( [start_values[i][1]], [start_values[i][3]],
+               markersize=1.5, label="", color=colour)
 
-# xs, ys, zs = map(x -> getindex.(x, 1), points_array[:, idx]),
-#               map(x -> getindex.(x, 2), points_array[:, idx]),
-#               map(x -> getindex.(x, 3), points_array[:, idx])
+    plot!( x_vals, y_vals,
+          label="", color=colour)
+end
 
-# plot!(xs, ys, zs;
-#     label="Lorenz Attractor",
-#     xlabel="X", ylabel="Y", zlabel="Z",
-#     title="Lorenz Attractor in 3D",
-#     legend=false, color=:blue)
-
-# lorenz(σ, b, β, x, y, z, dt, iterations, idx)
-# x_vals = [p[1] for p in points_array]
-# y_vals = [p[2] for p in points_array]
-# z_vals = [p[3] for p in points_array]
-# plot!(x_vals, y_vals, z_vals, label="Lorenz Attractor", xlabel="X", ylabel="Y", zlabel="Z", title="Lorenz Attractor in 3D", legend=false, color=:blue)
-# plot!(x_vals, y_vals, z_vals, label="", xlabel="X", ylabel="Y", zlabel="Z", title="Lorenz Attractor in 3D", legend=false)
-
-
+savefig(xz_plot, "lorenz-attractor-XZ_dt-($dt_round)_iterations-($iterations)_Paths-($paths)_r-($b_round).html")
