@@ -51,7 +51,7 @@ z_min = BigFloat("75")
 z_max = BigFloat("300")
 
 iterations = 50000
-paths = 1
+paths = 10
 
 
 dt = BigFloat("0.005")
@@ -101,7 +101,8 @@ end
 lorenz_plot = plot(
     xlabel="X", ylabel="Y", zlabel="Z",
     title="Lorenz Attractor in 3D",
-    legend=false
+    legend=false,
+    size=(1500, 1000)
 )
 
 for i = 1:paths
@@ -120,10 +121,11 @@ for i = 1:paths
     plot!( x_vals, y_vals, z_vals,
           label="", color=colour)
 end
-b_round = round(b, digits=3)
+b_round = round(Float64(b), digits=5)
 dt_round = round(Float64(dt), digits=10)
+
 # display(lorenz_plot)
-savefig(lorenz_plot, "lorenz-attractor-3D_dt-($dt_round)_iterations-($iterations)_Paths-($paths)_r-($b_round).html")
+savefig(lorenz_plot, "3D__r-($b_round)_dt-($dt_round)_iterations-($iterations)_Paths-($paths).html")
 
 xz_plot = plot(
     xlabel="X", ylabel="Z", 
@@ -145,4 +147,28 @@ for i = 1:paths
           label="", color=colour)
 end
 
-savefig(xz_plot, "lorenz-attractor-XZ_dt-($dt_round)_iterations-($iterations)_Paths-($paths)_r-($b_round).html")
+savefig(xz_plot, "XZ__r-($b_round)_dt-($dt_round)_iterations-($iterations)_Paths-($paths).html")
+
+
+time_values = dt:dt:(dt*iterations)
+values_to_plot = 20000
+time_plot = plot(
+    xlabel="Time", ylabel="X",
+    title="Lorenz Attractor in Time",
+    legend=false
+)
+for i = 1:paths
+    x_vals = [p[1] for p in points_array[:, i]]
+    # colour = HSL(clamp(i / paths, 0.0, 1.0), 1.0, 0.5)
+    colour = RGB{Float64}(1-i/paths, 0.1, i/paths)
+
+    # println("Colour: ", colour)
+
+    # scatter!(time_values, x_vals,
+    #            markersize=2, label="", color=colour)
+
+    plot!(time_values[1:values_to_plot], x_vals[1:values_to_plot],
+          label="", color=colour)
+end
+
+savefig(time_plot, "Time__r-($b_round)_dt-($dt_round)_iterations-($iterations)_Paths-($paths).html")
